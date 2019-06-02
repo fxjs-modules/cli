@@ -1,0 +1,34 @@
+{
+  "name": "@fxjs/cli",
+  "version": "0.0.1",
+  "description": "",
+  "types": "@types/index.d.ts",
+  "main": "lib",
+  "scripts": {
+    "build": "fib-typify src -o lib",
+    "test": "fibjs test",
+    "ci": "npm run build && npm run test",
+    "prepublishOnly": "npm run build"
+  },
+  "ci": {
+    "type": "travis, appveyor",
+    "version": [
+      "0.26.0",
+      "0.26.1",
+      "0.27.0"
+    ]
+  },
+  "author": "richardo2016@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@fibjs/ci": "^2.2.0",
+    "@fibjs/types": "^0.27.0",
+    "fib-typify": "^0.5.2"
+  },
+  "dependencies": {
+    "@fibjs/detect-port": "^1.0.2",
+    "@fibjs/mkdirp": "^1.0.1",
+    "debug": "^4.1.1",
+    "mri": "^1.1.4"
+  }
+}

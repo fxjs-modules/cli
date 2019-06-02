@@ -1,0 +1,12 @@
+# same with .gitignore
+node_modules
+test.db*
+package-lock.json
+
+src
+build
+test
+examples
+
+/lib.ts
+/tsconfig.json
