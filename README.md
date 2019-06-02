@@ -413,7 +413,7 @@ cli.on('command:*', () => {
 
 [cac.js] is one lightweight, fast cli builder for node.js/deno app, [egoist], author of [cac.js], were managed to make convenient and elegant tool for javascript ecosystem.
 
-In fact, I trid to make PR to [cac.js] to make it support fibjs, in a way, it's much better than [commander.js] in  **cross-platform**, you would never find and node.js specific API in [cac.js]! As a contrast, `require('child_process')` is just writeen in [commander.js]'s source code, that made it difficult running [commender.js] in fibjs.
+In fact, I trid to make PR to [cac.js] to make it support fibjs, in a way, it's much better than [commander.js] in  **cross-platform**, you would never find and node.js specific API in [cac.js]! As a contrast, `require('child_process')` is just writeen in [commander.js]'s source code, that made it difficult running [commander.js] in fibjs.
 
 But there's some typically better APIs in fibjs that cac.js cannot use --- if do so, [cac.js]'s source code would contains many fibjs-only codes, useless for node.js/deno, that would mutilate elegant structure of [cac.js]
 
