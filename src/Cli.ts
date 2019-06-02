@@ -1,7 +1,7 @@
 import Mri = require('mri')
 import * as Utils from './utils'
 import { EventEmitter } from 'events';
-import { FCliGlobalCommand, FCliCommand } from './command';
+import { FCliGlobalCommand, FCliCommand } from './Command';
 import { DEFAULT_ARGS } from './ctrl';
 
 function showHelpOnExit (cli: FCli.Cli): boolean {
@@ -48,7 +48,7 @@ function runMatchedCommand(cli: FCli.Cli) {
     mcommand.checkRequiredArgs()
 
     const actionArgs: any[] = []
-    
+
     mcommand.args.forEach((arg, index) => {
         if (arg.rest) {
             actionArgs.push(args.slice(index))
@@ -66,7 +66,7 @@ export = class FCli extends EventEmitter implements FCli.Cli {
   name: string
   commands: FCliCommand.Command[]
   topLevelCommand: FCliCommand.GlobalCommand
-  
+
   matchedCommand?: FCliCommand.Command
   matchedCommandName?: string
   /**
@@ -137,7 +137,7 @@ export = class FCli extends EventEmitter implements FCli.Cli {
       throw `In .help(callback), non-empty callback must be one function, or leave it as 'undefined'`
 
     this.topLevelCommand.helpCallback = callback
-    
+
     return this
   }
 
@@ -147,7 +147,7 @@ export = class FCli extends EventEmitter implements FCli.Cli {
    */
   version(version: string, customFlags = '-v, --version') {
     this.topLevelCommand.version(version, customFlags)
-    
+
     return this
   }
 
@@ -265,7 +265,7 @@ function parseCliCommand(
     ...topLevelCommand.options,
     ...(command ? command.options : [])
   ]
-  
+
   const mriOptions = Utils.getMriOptions(cliOptions)
 
   // Extract everything after `--` since mri doesn't support it

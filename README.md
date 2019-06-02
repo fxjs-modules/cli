@@ -1,5 +1,7 @@
 [![NPM version](https://img.shields.io/npm/v/@fxjs/cli.svg?style=flat)](https://npmjs.com/package/@fxjs/cli)
 [![NPM downloads](https://img.shields.io/npm/dm/@fxjs/cli.svg?style=flat)](https://npmjs.com/package/@fxjs/cli)
+[![Build Status](https://travis-ci.org/fxjs-modules/cli.svg)](https://travis-ci.org/fxjs-modules/cli)
+[![Build status](https://ci.appveyor.com/api/projects/status/61m8kfc4hg7msuap?svg=true)](https://ci.appveyor.com/project/richardo2016/cli)
 
 ## Introduction
 
