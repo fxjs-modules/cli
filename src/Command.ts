@@ -1,17 +1,20 @@
-import Option = require('./Option');
+/// <reference path="../dts/command.d.ts" />
+
+import FCli = require('./Cli')
+import CliOption = require('./Option');
 import * as Utils from './utils'
 import { exit } from 'process';
 import { PLATFORM_INFO, EOL } from './ctrl';
 
-export class FCliCommand implements FCliCommand.Command {
-    options: FCliOption.Option[]
+export class CliCommand /* implements CliCommandNS.Command */ {
+    options: CliOption[]
     aliasNames: string[]
     /* Parsed command name */
     name: string
-    args: FCliCommand.Argument[]
-    examples: FCliCommand.CommandExample[]
-    helpCallback?: FCliCommon.HelpCallback
-    topLevelCommand?: FCliCommand.GlobalCommand
+    args: CliCommandNS.Argument[]
+    examples: CliCommandNS.CommandExample[]
+    helpCallback?: CliCommandNS.HelpCallback
+    topLevelCommand?: FCliGlobalCommand
 
     commandAction?: (...args: any[]) => any
     usageText?: string
@@ -20,8 +23,8 @@ export class FCliCommand implements FCliCommand.Command {
     constructor(
         public raw: string,
         public description: string,
-        public config: FCliCommand.Config = {},
-        public cli: FCli.Cli
+        public config: CliCommandNS.Config = {},
+        public cli: FCli
     ) {
         this.options = []
         this.aliasNames = []
@@ -30,18 +33,34 @@ export class FCliCommand implements FCliCommand.Command {
         this.examples = []
     }
 
+    /**
+     * set usage text
+     * 
+     * @param text usage text
+     */
     usage(text: string) {
         this.usageText = text
         return this
     }
 
+    /**
+     * set version number
+     * 
+     * @param version semver string
+     * @param customFlags customzied flags, default as `-v, --version`
+     */
     version(version: string, customFlags = '-v, --version') {
         this.versionNumber = version
         this.option(customFlags, 'Display version number')
         return this
     }
 
-    example(example: FCliCommand.CommandExample) {
+    /**
+     * Add command example
+     * 
+     * @param example Example Instance
+     */
+    example(example: CliCommandNS.CommandExample) {
         this.examples.push(example)
         return this
     }
@@ -52,19 +71,38 @@ export class FCliCommand implements FCliCommand.Command {
      * @param description Option description
      * @param config Option config
      */
-    option(raw: string, description: string, config?: FCliOption.OptionConfig) {
+    option(raw: string, description: string, config?: CliOption['config']) {
         this.options.push(
-            new Option(raw, description, config)
+            new CliOption(raw, description, config)
         )
 
         return this
     }
 
+    /**
+     * add alias of this command
+     * @param name alias name
+     */
     alias(name: string) {
         this.aliasNames.push(name)
         return this
     }
 
+    /**
+     * set action for this command 
+     * 
+     * 
+        interface ActionCallback {
+            (
+                // Parsed CLI args
+                // The last arg will be an array if it's an varadic argument
+                ...args: string | string[] | number | number[],
+                // Parsed CLI options
+                options: CliOption[]
+            ): void
+        }
+        * @param callback callback when this command executed
+    */
     action(callback: (...args: any[]) => any) {
         Utils.addHiddenChangeableProperty(this, 'commandAction', callback)
         return this
@@ -78,11 +116,11 @@ export class FCliCommand implements FCliCommand.Command {
         return this.name === name || this.aliasNames.includes(name)
     }
 
-    get isDefaultCommand() {
+    get isDefaultCommand(): boolean {
         return this.name === '' || this.aliasNames.includes('!')
     }
 
-    get isGlobalCommand() {
+    get isGlobalCommand(): boolean {
         return this instanceof FCliGlobalCommand
     }
 
@@ -104,7 +142,7 @@ export class FCliCommand implements FCliCommand.Command {
             helpCallback
         } = this.cli.topLevelCommand
 
-        const sections: FCliCommon.HelpSection[] = [
+        const sections: CliCommandNS.HelpSection[] = [
             {
                 body: `${name}${versionNumber ? ` v${versionNumber}` : ''}`
             }
@@ -266,8 +304,8 @@ export class FCliCommand implements FCliCommand.Command {
     }
 }
 
-export class FCliGlobalCommand extends FCliCommand {
-  constructor(cli: FCli.Cli) {
+export class FCliGlobalCommand extends CliCommand {
+  constructor(cli: any) {
     super('@@global@@', '', {}, cli)
   }
 }

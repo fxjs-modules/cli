@@ -1,13 +1,13 @@
 const test = require('test')
 test.setup()
 
-const FCliOption = require('../../lib/Option')
+const CliOption = require('../../lib/Option')
 
-describe('FCliOption', () => {
+describe('CliOption', () => {
     let option = null
 
     it('simple', () => {
-        option = new FCliOption('--foo', 'Foo options')
+        option = new CliOption('--foo', 'Foo options')
 
         assert.deepEqual(option, {
             name: 'foo',
@@ -22,7 +22,7 @@ describe('FCliOption', () => {
     })
 
     it('not required', () => {
-        option = new FCliOption('--scale [level]', 'Scaling level')
+        option = new CliOption('--scale [level]', 'Scaling level')
 
         assert.deepEqual(option, {
             name: 'scale',
@@ -37,7 +37,7 @@ describe('FCliOption', () => {
     })
 
     it('required', () => {
-        option = new FCliOption('--out <dir>', 'Output directory')
+        option = new CliOption('--out <dir>', 'Output directory')
 
         assert.deepEqual(option, {
             name: 'out',
@@ -52,7 +52,7 @@ describe('FCliOption', () => {
     })
 
     it('negative', () => {
-        option = new FCliOption('--no-config', 'Disable config file')
+        option = new CliOption('--no-config', 'Disable config file')
 
         assert.deepEqual(option, {
             name: 'config',

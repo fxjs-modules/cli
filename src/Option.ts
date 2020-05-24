@@ -1,9 +1,12 @@
 import * as Utils from './utils'
 
-export = class FCliOption implements FCliOption.Option {
+class CliOption {
     name: string
     names: string[]
-    config: FCliOption.OptionConfig
+    config: {
+        default?: any
+        type?: any[]
+    } = {}
     negative: boolean
 
     readonly required?: boolean
@@ -12,7 +15,7 @@ export = class FCliOption implements FCliOption.Option {
     constructor(
         public raw: string,
         public description: string,
-        config?: FCliOption.OptionConfig
+        config?: CliOption['config']
     ) {
         this.config = Object.assign({}, config)
 
@@ -47,3 +50,5 @@ export = class FCliOption implements FCliOption.Option {
             Utils.addVisibleUnWrittableProperty(this, 'isBoolean', true)
     }
 }
+
+export = CliOption

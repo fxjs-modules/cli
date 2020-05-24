@@ -1,4 +1,5 @@
+import { RayTsTypeHelpers } from '@richardo2016/ts-type-helpers'
+
 import FCli = require('./Cli')
 
-const FN: FCli.ExportModule = (...args: any) => new FCli(...args)
-export = FN
+export = (...args: RayTsTypeHelpers.ConstructorParams<typeof FCli>) => new FCli(...args)

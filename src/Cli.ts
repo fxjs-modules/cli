@@ -1,21 +1,22 @@
 import Mri = require('mri')
 import * as Utils from './utils'
 import { EventEmitter } from 'events';
-import { FCliGlobalCommand, FCliCommand } from './Command';
+import { FCliGlobalCommand, CliCommand } from './Command';
+import CliOption = require('./Option')
 import { DEFAULT_ARGS } from './ctrl';
 
-function showHelpOnExit (cli: FCli.Cli): boolean {
+function showHelpOnExit (cli: FCli): boolean {
   return cli.topLevelCommand.hasOwnProperty('helpCallback')
 }
 
-function showVersionOnExit (cli: FCli.Cli): boolean {
+function showVersionOnExit (cli: FCli): boolean {
   return !!cli.topLevelCommand.versionNumber
 }
 
 function setParsedInfo(
-  this: FCli.Cli,
-  { args, options, rawOptions }: FCliArgv.MriResult,
-  matchedCommand?: FCliCommand.Command,
+  this: FCli,
+  { args, options, rawOptions }: MriResult,
+  matchedCommand?: CliCommand,
   matchedCommandName?: string
 ) {
   this.args = args
@@ -31,14 +32,14 @@ function setParsedInfo(
   return this
 }
 
-function setupTopLevelCmd (this: FCli.Cli) {
+function setupTopLevelCmd (this: FCli) {
     this.topLevelCommand = new FCliGlobalCommand(this)
     this.topLevelCommand.usage('<command> [options]')
 }
 
 
 
-function runMatchedCommand(cli: FCli.Cli) {
+function runMatchedCommand(cli: FCli) {
     const { args, options, matchedCommand: mcommand } = cli
 
     if (!mcommand || !mcommand.commandAction) return
@@ -61,13 +62,29 @@ function runMatchedCommand(cli: FCli.Cli) {
     return mcommand.commandAction.apply(this, actionArgs)
 }
 
-export = class FCli extends EventEmitter implements FCli.Cli {
+interface ParsedArgv {
+  args: ReadonlyArray<string>
+  options: {
+      [k: string]: any
+  }
+}
+
+interface RestrainedMriOptions {
+  alias: { [k: string]: string[] }
+  boolean: string[]
+}
+
+interface MriResult extends ParsedArgv {
+  rawOptions: { [k: string]: any }
+}
+
+class FCli extends EventEmitter {
   /** The program name to display in help and version message */
   name: string
-  commands: FCliCommand.Command[]
-  topLevelCommand: FCliCommand.GlobalCommand
+  commands: CliCommand[]
+  topLevelCommand: FCliGlobalCommand
 
-  matchedCommand?: FCliCommand.Command
+  matchedCommand?: CliCommand
   matchedCommandName?: string
   /**
    * Raw CLI arguments
@@ -76,15 +93,15 @@ export = class FCli extends EventEmitter implements FCli.Cli {
   /**
    * Parsed CLI arguments
    */
-  args: FCliArgv.MriResult['args']
+  args: MriResult['args']
   /**
    * Parsed CLI options, camelCased
    */
-  options: FCliArgv.MriResult['options']
+  options: MriResult['options']
   /**
    * Raw CLI options, i.e. not camelcased
    */
-  rawOptions: FCliArgv.MriResult['rawOptions']
+  rawOptions: MriResult['rawOptions']
 
   /**
    * @param name The program name to display in help and version message
@@ -110,8 +127,8 @@ export = class FCli extends EventEmitter implements FCli.Cli {
   /**
    * Add a sub-command
    */
-  command(raw: string, description?: string, config?: FCliCommand.Config) {
-    const command = new FCliCommand(raw, description || '', config, this)
+  command(raw: string, description?: string, config?: CliCommandNS.Config) {
+    const command = new CliCommand(raw, description || '', config, this)
     command.topLevelCommand = this.topLevelCommand
     this.commands.push(command)
     return command
@@ -122,7 +139,7 @@ export = class FCli extends EventEmitter implements FCli.Cli {
    *
    * Which is also applied to sub-commands.
    */
-  option(raw: string, description: string, config?: FCliOption.OptionConfig) {
+  option(raw: string, description: string, config?: CliOption['config']) {
     this.topLevelCommand.option(raw, description, config)
     return this
   }
@@ -131,7 +148,7 @@ export = class FCli extends EventEmitter implements FCli.Cli {
    * Show help message when `-h, --help` flags appear.
    *
    */
-  help(callback?: FCliCommon.HelpCallback) {
+  help(callback?: CliCommandNS.HelpCallback) {
     this.topLevelCommand.option('-h, --help', 'Display this message')
     if (callback && typeof callback !== 'function')
       throw `In .help(callback), non-empty callback must be one function, or leave it as 'undefined'`
@@ -156,7 +173,7 @@ export = class FCli extends EventEmitter implements FCli.Cli {
    *
    * This example added here will not be used by sub-commands.
    */
-  example(example: FCliCommand.CommandExample) {
+  example(example: CliCommandNS.CommandExample) {
     this.topLevelCommand.example(example)
     return this
   }
@@ -164,7 +181,7 @@ export = class FCli extends EventEmitter implements FCli.Cli {
   /**
    * Parse argv
    */
-  parse (argvs: string[] = DEFAULT_ARGS, opts?: { run?: boolean }): FCliArgv.ParsedArgv {
+  parse (argvs: string[] = DEFAULT_ARGS, opts?: { run?: boolean }): ParsedArgv {
     const  {
       /** Whether to run the action for matched command */
       run = true
@@ -254,19 +271,54 @@ export = class FCli extends EventEmitter implements FCli.Cli {
   }
 }
 
+function getMriOptions (options: CliOption[]): RestrainedMriOptions {
+  const result: RestrainedMriOptions = { alias: {}, boolean: [] }
+
+  for (const [index, option] of options.entries()) {
+    // We do not set default values in mri options
+    // Since its type (typeof) will be used to cast parsed arguments.
+    // Which mean `--foo foo` will be parsed as `{foo: true}` if we have `{default:{foo: true}}`
+
+    // Set alias
+    if (option.names.length > 1) {
+      result.alias[option.names[0]] = option.names.slice(1)
+    }
+    // Set boolean
+    if (option.isBoolean) {
+      if (option.negative) {
+        // For negative option
+        // We only set it to `boolean` type when there's no string-type option with the same name
+        const hasStringTypeOption = options.some((o, i) => {
+          return (
+            i !== index &&
+            typeof o.required === 'boolean' && 
+            o.names.some(name => option.names.includes(name))
+          )
+        })
+
+        if (!hasStringTypeOption)
+          result.boolean.push(option.names[0])
+      } else
+        result.boolean.push(option.names[0])
+    }
+  }
+
+  return result
+}
+
 function parseCliCommand(
   argv: string[],
-  topLevelCommand: FCli.Cli['topLevelCommand'],
+  topLevelCommand: FCli['topLevelCommand'],
   /** Matched command */
-  command?: FCliCommand.Command
-): FCliArgv.MriResult {
+  command?: CliCommand
+): MriResult {
   // All added options
-  const cliOptions: FCli.Cli['topLevelCommand']['options'] = [
+  const cliOptions: FCli['topLevelCommand']['options'] = [
     ...topLevelCommand.options,
     ...(command ? command.options : [])
   ]
 
-  const mriOptions = Utils.getMriOptions(cliOptions)
+  const mriOptions = getMriOptions(cliOptions)
 
   // Extract everything after `--` since mri doesn't support it
   let argsAfterDoubleDashes: string[] = []
@@ -326,3 +378,5 @@ function parseCliCommand(
     rawOptions: parsed
   }
 }
+
+export = FCli

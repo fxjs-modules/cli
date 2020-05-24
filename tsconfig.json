@@ -15,8 +15,7 @@
         "types": [
             "@fibjs/types"
         ],
-        "typeRoots": [
-            "@types/index.d.ts"
-        ]
+        "declaration": true,
+        "declarationDir": "typings"
     }
 }

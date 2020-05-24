@@ -1,6 +1,37 @@
-import Mri = require('mri')
+// interface ParserOptions {
+//   string?: string | string[]
+//   boolean?: boolean | string | string[]
+//   /**
+//    * @example
+//    * 
+//    * {
+//    *  "alias1": "argument1",
+//    *  "alias2": "argument2",
+//    * }
+//    * 
+//    * or
+//    * 
+//    * ["argument1", "argument2"]
+//    */
+//   alias?: { [a: string]: string } | string[]
 
-// export function scan(argv: string | string[], opts: FCliCommon.ParserOptions) {
+//   /**
+//    * @example
+//    * 
+//    * {
+//    *  "arg1": [defaultValue],
+//    *  "arg2": [defaultValue],
+//    * }
+//    */
+//   default?: { [arg: string]: any }
+
+//   unknown?: {
+//       (k: string): boolean
+//   }
+
+//   '--': boolean
+// }
+// export function scan(argv: string | string[], opts: FCliCommonNS.ParserOptions) {
 //     if (!Array.isArray(argv))
 //         argv = [argv]
 
@@ -23,7 +54,7 @@ import Mri = require('mri')
 // }
 
 // type LOGLEVEL = 'error' | 'warn' | 'log'
-// function checkOptions(opts: FCliCommon.ParserOptions): undefined | [string, LOGLEVEL, boolean] {
+// function checkOptions(opts: FCliCommonNS.ParserOptions): undefined | [string, LOGLEVEL, boolean] {
 //     if (!opts)
 //         return
 
@@ -68,11 +99,11 @@ function getVarNameInfo (name: string) {
   return { isValid: isRest || isNormal, isRest, varName }
 }
 
-function makeDemandedOption(name: string, required: boolean, rest: boolean): FCliCommand.Argument {
+function makeDemandedOption(name: string, required: boolean, rest: boolean): CliCommandNS.Argument {
     return { required, name, rest }
 }
 
-export function parseBracketedArgs(v: string): FCliCommand.OrderedCommandArguments {
+export function parseBracketedArgs(v: string): CliCommandNS.OrderedCommandArguments {
     const args = []
 
     let angled_tuple, square_tuple, info
@@ -90,41 +121,6 @@ export function parseBracketedArgs(v: string): FCliCommand.OrderedCommandArgumen
     }
 
     return args
-}
-
-export function getMriOptions (options: FCliOption.Option[]): FCliArgv.RestrainedMriOptions {
-  const result: FCliArgv.RestrainedMriOptions = { alias: {}, boolean: [] }
-
-  for (const [index, option] of options.entries()) {
-    // We do not set default values in mri options
-    // Since its type (typeof) will be used to cast parsed arguments.
-    // Which mean `--foo foo` will be parsed as `{foo: true}` if we have `{default:{foo: true}}`
-
-    // Set alias
-    if (option.names.length > 1) {
-      result.alias[option.names[0]] = option.names.slice(1)
-    }
-    // Set boolean
-    if (option.isBoolean) {
-      if (option.negative) {
-        // For negative option
-        // We only set it to `boolean` type when there's no string-type option with the same name
-        const hasStringTypeOption = options.some((o, i) => {
-          return (
-            i !== index &&
-            typeof o.required === 'boolean' && 
-            o.names.some(name => option.names.includes(name))
-          )
-        })
-
-        if (!hasStringTypeOption)
-          result.boolean.push(option.names[0])
-      } else
-        result.boolean.push(option.names[0])
-    }
-  }
-
-  return result
 }
 
 
