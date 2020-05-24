@@ -34,6 +34,6 @@
     "@fibjs/ci": "^2.2.0",
     "@fibjs/types": "^0.27.0",
     "@types/mri": "^1.1.0",
-    "fib-typify": "^0.8.1"
+    "fib-typify": "^0.8.2"
   }
 }
