@@ -91,5 +91,5 @@ export declare class CliCommand {
     checkOptionValue(): void;
 }
 export declare class FCliGlobalCommand extends CliCommand {
-    constructor(cli: any);
+    constructor(cli: FCli);
 }

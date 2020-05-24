@@ -47,7 +47,6 @@
     - [command.option()](#commandoption)
     - [command.action(callback)](#commandactioncallback)
     - [command.alias(name)](#commandaliasname)
-    - [command.allowUnknownOptions()](#commandallowunknownoptions)
     - [command.example(example)](#commandexampleexample)
   - [Events](#events)
 - [FAQ](#faq)
@@ -132,9 +131,16 @@ cli.help()
 cli.parse()
 ```
 
-A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated. If you really want to use unknown options, use [`command.allowUnknownOptions`](#commandallowunknownoptions).
+A command's options are validated when the command is used. Any unknown options will be reported as an error by default. However, if an action-based command does not define an action, then the options are not validated. If you really want to use unknown options, pass `allowUnknownOptions: true` when initializing the command, like this:
 
-<img src="https://user-images.githubusercontent.com/6339390/58762857-9ac19300-8586-11e9-98c9-12add42e1d3a.png" alt="image" style="max-width:100%;">
+```js
+const cli = require('@fxjs/cli')()
+
+cli
+  .command('rm <dir>', 'Remove a dir', {
+    allowUnknownOptions: true
+  })
+```
 
 ### Brackets
 

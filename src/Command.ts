@@ -6,7 +6,7 @@ import * as Utils from './utils'
 import { exit } from 'process';
 import { PLATFORM_INFO, EOL } from './ctrl';
 
-export class CliCommand /* implements CliCommandNS.Command */ {
+export class CliCommand {
     options: CliOption[]
     aliasNames: string[]
     /* Parsed command name */
@@ -305,7 +305,7 @@ export class CliCommand /* implements CliCommandNS.Command */ {
 }
 
 export class FCliGlobalCommand extends CliCommand {
-  constructor(cli: any) {
+  constructor(cli: FCli) {
     super('@@global@@', '', {}, cli)
   }
 }
