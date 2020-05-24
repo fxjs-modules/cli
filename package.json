@@ -1,6 +1,6 @@
 {
   "name": "@fxjs/cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "types": "typings/index.d.ts",
   "main": "lib",
@@ -21,7 +21,7 @@
       "0.30.0"
     ]
   },
-  "author": "richardo2016@gmail.com",
+  "author": "Richard <richardo2016@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@fibjs/detect-port": "^1.0.2",
