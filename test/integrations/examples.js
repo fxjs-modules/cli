@@ -9,6 +9,10 @@ const cmd = process.execPath
 const cwd = process.cwd()
 const root = path.resolve(__dirname, '../../')
 
+function textQuote(input) {
+	return process.platform === 'win32' ? JSON.stringify(input) : input
+}
+
 describe('Examples', () => {
 	before(() => {
 		process.chdir(root)
@@ -69,7 +73,7 @@ describe('Examples', () => {
 			[
 				'build',
 				'--env', 'envv',
-				'--foo-bar', 'foo-bar\'s value'
+				'--foo-bar', textQuote('foo-bar\'s value')
 			],
 			`{\n  \"--\": [],\n  \"env\": \"envv\",\n  \"fooBar\": \"foo-bar's value\"\n}`
 		],
@@ -80,7 +84,7 @@ describe('Examples', () => {
 				'build',
 				// it uncomment it, it ould overwrite `--env.API_SECRET` forward
 				// '--env', 'envv',
-				'--foo-bar', 'foo-bar\'s value',
+				'--foo-bar', textQuote('foo-bar\'s value'),
 				`--env.API_SECRET=${md5Value}`,
 			],
 			`{\n  \"--\": [],\n  \"fooBar\": \"foo-bar's value\",\n  \"env\": {\n    \"API_SECRET\": \"${md5Value}\"\n  }\n}`
@@ -90,7 +94,7 @@ describe('Examples', () => {
 			'./examples/dot-style-options.js',
 			[
 				'build',
-				'--foo-bar', 'foo-bar\'s value',
+				'--foo-bar', textQuote('foo-bar\'s value'),
 				`--env.API_SECRET=${md5Value}`,
 				'--env', 'envv',
 			],
@@ -102,18 +106,20 @@ describe('Examples', () => {
 			[
 				'build',
 				`a.js b.js c.js`,
-				'--foo', 'foo\'s value'
+				'--foo', textQuote('foo\'s value')
 			],
 			// entry is `a.js b.js c.js`, no otherFiles
-			`a.js b.js c.js\n[\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
+			process.platform === 'win32' ? 
+			`a.js\n[\n  \"b.js\",\n  \"c.js\",\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
+			: `a.js b.js c.js\n[\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
 		],
 		[
 			'rest-arguments',
 			'./examples/rest-arguments.js',
 			[
 				'build',
-				...(`a.js b.js c.js`.split(' ')),
-				'--foo', 'foo\'s value',
+				...(`a.js b.js c.js`.split(' ').map(x => textQuote(x))),
+				'--foo', textQuote('foo\'s value'),
 			],
 			// entry is `a.js`, otherFiles is ['b.js', 'c.js']
 			`a.js\n[\n  \"b.js\",\n  \"c.js\",\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
@@ -124,21 +130,21 @@ describe('Examples', () => {
 			['--help'],
 			``
 		],
-	].forEach(([desc, fpath, argvs, result, isJson]) => {
+	].filter(x => x).forEach(([desc, fpath, argvs, result, isJson]) => {
 		it(desc, () => {
 			const sp = process.open(
 				cmd,
 				[fpath].concat(argvs)
 			)
 			// normalize EOL of stdout
-			sp.stdout.EOL = '\n'
+			// sp.stdout.EOL = '\n'
 			sp.wait()
 			const output = sp.stdout.readLines().join('\n')
 
 			if (!isJson) {
 
 				if (result)
-					assert.equal(result, output)
+					assert.equal(output, result)
 				// else
 				// 	console.log('output', output);
 			} else {
