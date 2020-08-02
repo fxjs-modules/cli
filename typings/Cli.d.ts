@@ -84,7 +84,7 @@ declare class FCli extends EventEmitter {
      *
      * This will also call `process.exit(0)` to quit the process.
      */
-    outputHelp(): void;
+    outputHelp(opts?: CliCommandNS.OutputLikeOptions): void;
     /**
      * Output the version number.
      *

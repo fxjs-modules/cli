@@ -21,4 +21,11 @@ declare namespace CliCommandNS {
     }
 
     type HelpCallback = (sections: HelpSection[]) => void
+
+    type OutputLikeOptions = {
+        /**
+         * @description should exit after print help
+         */
+        exit?: boolean
+    }
 }

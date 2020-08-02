@@ -252,11 +252,11 @@ class FCli extends EventEmitter {
    *
    * This will also call `process.exit(0)` to quit the process.
    */
-  outputHelp() {
+  outputHelp(opts?: CliCommandNS.OutputLikeOptions) {
     if (this.matchedCommand)
-      this.matchedCommand.outputHelp()
+      this.matchedCommand.outputHelp(opts)
     else
-      this.topLevelCommand.outputHelp()
+      this.topLevelCommand.outputHelp(opts)
   }
 
   /**

@@ -134,12 +134,11 @@ export class CliCommand {
         return !!this.options.find(option => option.names.includes(name))
     }
 
-    outputHelp() {
+    getCmdHelpSections () {
         const { name, commands } = this.cli
         const {
             versionNumber,
             options: globalOptions,
-            helpCallback
         } = this.cli.topLevelCommand
 
         const sections: CliCommandNS.HelpSection[] = [
@@ -220,9 +219,18 @@ export class CliCommand {
             })
         }
 
-        if (helpCallback) {
+        return sections;
+    }
+
+    outputHelp({
+        exit: shouldExit = true
+    }: CliCommandNS.OutputLikeOptions = {}) {
+        const sections = this.getCmdHelpSections();
+
+        const { helpCallback } = this.cli.topLevelCommand
+
+        if (helpCallback)
             helpCallback(sections)
-        }
 
         console.log(
             sections
@@ -234,16 +242,21 @@ export class CliCommand {
                 .join(`${EOL}${EOL}`)
         )
 
-        exit(0)
+        if (shouldExit)
+            exit(0)
     }
 
-    outputVersion() {
+    outputVersion({
+        exit: shouldExit = true
+    }: CliCommandNS.OutputLikeOptions = {}) {
         const { name } = this.cli
         const { versionNumber } = this.cli.topLevelCommand
         if (versionNumber) {
             console.log(`${name}/${versionNumber} ${PLATFORM_INFO}`)
         }
-        exit(0)
+
+        if (shouldExit)
+            exit(0)
     }
 
     checkRequiredArgs() {

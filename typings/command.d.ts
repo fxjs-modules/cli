@@ -76,8 +76,9 @@ export declare class CliCommand {
      * @param name Option name
      */
     hasOption(name: string): boolean;
-    outputHelp(): void;
-    outputVersion(): void;
+    getCmdHelpSections(): CliCommandNS.HelpSection[];
+    outputHelp({ exit: shouldExit }?: CliCommandNS.OutputLikeOptions): void;
+    outputVersion({ exit: shouldExit }?: CliCommandNS.OutputLikeOptions): void;
     checkRequiredArgs(): void;
     /**
      * Check if the parsed options contain any unknown options
