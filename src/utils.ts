@@ -1,69 +1,3 @@
-// interface ParserOptions {
-//   string?: string | string[]
-//   boolean?: boolean | string | string[]
-//   /**
-//    * @example
-//    * 
-//    * {
-//    *  "alias1": "argument1",
-//    *  "alias2": "argument2",
-//    * }
-//    * 
-//    * or
-//    * 
-//    * ["argument1", "argument2"]
-//    */
-//   alias?: { [a: string]: string } | string[]
-
-//   /**
-//    * @example
-//    * 
-//    * {
-//    *  "arg1": [defaultValue],
-//    *  "arg2": [defaultValue],
-//    * }
-//    */
-//   default?: { [arg: string]: any }
-
-//   unknown?: {
-//       (k: string): boolean
-//   }
-
-//   '--': boolean
-// }
-// export function scan(argv: string | string[], opts: FCliCommonNS.ParserOptions) {
-//     if (!Array.isArray(argv))
-//         argv = [argv]
-
-//     const [msg = null, loglevel = 'warn', abort = false] = checkOptions(opts) || []
-//     if (msg) {
-//         switch (loglevel) {
-//             case 'error':
-//                 console.error(msg)
-//             case 'warn':
-//                 console.warn(msg)
-//             case 'log':
-//             default:
-//                 console.log(msg)
-//         }
-
-//         if (abort) return;
-//     }
-
-//     return Mri(argv, opts)
-// }
-
-// type LOGLEVEL = 'error' | 'warn' | 'log'
-// function checkOptions(opts: FCliCommonNS.ParserOptions): undefined | [string, LOGLEVEL, boolean] {
-//     if (!opts)
-//         return
-
-//     if (opts.hasOwnProperty('boolean')) {
-//         if (typeof opts.boolean !== 'string' && (!Array.isArray(opts.boolean) || opts.boolean.some(x => typeof x !== 'string')))
-//             return [`options.boolean is expected with type string | string[]`, 'warn', false]
-//     }
-// }
-
 /**
  * @param v 
  */
@@ -131,9 +65,6 @@ export function findLongestStr (arr: string[]) {
 }
 
 export function padRight (str: string, length: number, fill: string = ' ') {
-  // while (str.length < length)
-  //   str += fill
-  // return str
   return str.length >= length ? str : `${str}${' '.repeat(length - str.length)}`
 }
 

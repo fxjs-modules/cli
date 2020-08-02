@@ -37,8 +37,6 @@ function setupTopLevelCmd (this: FCli) {
     this.topLevelCommand.usage('<command> [options]')
 }
 
-
-
 function runMatchedCommand(cli: FCli) {
     const { args, options, matchedCommand: mcommand } = cli
 
