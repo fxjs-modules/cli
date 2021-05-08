@@ -1,3 +1,6 @@
 import FCli = require('./Cli');
-declare const _default: (name?: string) => FCli;
-export = _default;
+declare const getFCli: {
+    (name?: string): FCli;
+    default: any;
+};
+export = getFCli;

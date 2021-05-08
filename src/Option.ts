@@ -5,7 +5,7 @@ class CliOption {
     names: string[]
     config: {
         default?: any
-        type?: any[]
+        type?: [] | [Utils.ITransformFunc<any>]
     } = {}
     negative: boolean
 

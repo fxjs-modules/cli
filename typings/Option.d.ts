@@ -1,3 +1,4 @@
+import * as Utils from './utils';
 declare class CliOption {
     raw: string;
     description: string;
@@ -5,7 +6,7 @@ declare class CliOption {
     names: string[];
     config: {
         default?: any;
-        type?: any[];
+        type?: [] | [Utils.ITransformFunc<any>];
     };
     negative: boolean;
     readonly required?: boolean;

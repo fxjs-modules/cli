@@ -10,6 +10,13 @@ export declare const camelCase: (input: string) => string;
 export declare function setDotProp(obj: {
     [k: string]: any;
 }, keys: string[], val: any): void;
+export declare type ITransformFunc<T> = (...args: any[]) => T;
+export declare type ITransforms = {
+    [k: string]: {
+        shouldTransform: boolean;
+        transformFunction: ITransformFunc<any>;
+    };
+};
 export declare function setByType(obj: {
     [k: string]: any;
 }, transforms: {

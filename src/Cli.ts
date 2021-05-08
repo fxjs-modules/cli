@@ -289,7 +289,7 @@ function getMriOptions (options: CliOption[]): RestrainedMriOptions {
         const hasStringTypeOption = options.some((o, i) => {
           return (
             i !== index &&
-            typeof o.required === 'boolean' && 
+            typeof o.required === 'boolean' &&
             o.names.some(name => option.names.includes(name))
           )
         })
@@ -341,7 +341,7 @@ function parseCliCommand(
       ? command.config.ignoreOptionDefaultValue
       : topLevelCommand.config.ignoreOptionDefaultValue
 
-  let transforms = Object.create(null)
+  let transforms: Utils.ITransforms = Object.create(null)
 
   for (const cliOption of cliOptions) {
     if (!ignoreDefault && cliOption.config.default !== undefined) {

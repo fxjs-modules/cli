@@ -1,5 +1,5 @@
 /**
- * @param v 
+ * @param v
  */
 export function removeBrackets(v: string) {
     return v.replace(/[<[].+/, '').trim()
@@ -27,7 +27,7 @@ function getVarNameInfo (name: string) {
     isRest = VALID_REST_VARNAME_RE.test(name)
     if (isRest)
       varName = name.slice(3)
-  } else 
+  } else
     varName = name
 
   return { isValid: isRest || isNormal, isRest, varName }
@@ -96,6 +96,13 @@ export function setDotProp (
   }
 }
 
+export type ITransformFunc<T> = (...args: any[]) => T
+export type ITransforms = {
+	[k: string]: {
+		shouldTransform: boolean,
+		transformFunction: ITransformFunc<any>
+	}
+}
 export function setByType (
   obj: { [k: string]: any },
   transforms: { [k: string]: any }
