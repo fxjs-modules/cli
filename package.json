@@ -1,6 +1,6 @@
 {
   "name": "@fxjs/cli",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "types": "typings/index.d.ts",
   "main": "lib",
