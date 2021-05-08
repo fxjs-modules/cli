@@ -1,8 +1,8 @@
 const test = require('test')
 test.setup()
 
+const io = require('io')
 const path = require('path')
-const ws = require('ws')
 const uuid = require('uuid')
 
 const cmd = process.execPath
@@ -11,6 +11,25 @@ const root = path.resolve(__dirname, '../../')
 
 function textQuote(input) {
 	return process.platform === 'win32' ? JSON.stringify(input) : input
+}
+
+function openProcess (cmd, args = []) {
+	if (!process.open) {
+		const child_process = require('child_process')
+		const bs = child_process.spawn(
+			cmd,
+			args
+		);
+
+		var stdout = new io.BufferedStream(bs.stdout);
+
+		return stdout
+	}
+
+	const sp = process.open(cmd, args);
+	sp.wait();
+
+	return sp.stdout;
 }
 
 describe('Examples', () => {
@@ -109,7 +128,7 @@ describe('Examples', () => {
 				'--foo', textQuote('foo\'s value')
 			],
 			// entry is `a.js b.js c.js`, no otherFiles
-			process.platform === 'win32' ? 
+			process.platform === 'win32' ?
 			`a.js\n[\n  \"b.js\",\n  \"c.js\",\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
 			: `a.js b.js c.js\n[\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
 		],
@@ -132,14 +151,13 @@ describe('Examples', () => {
 		],
 	].filter(x => x).forEach(([desc, fpath, argvs, result, isJson]) => {
 		it(desc, () => {
-			const sp = process.open(
+			const stdout = openProcess(
 				cmd,
 				[fpath].concat(argvs)
 			)
 			// normalize EOL of stdout
 			// sp.stdout.EOL = '\n'
-			sp.wait()
-			const output = sp.stdout.readLines().join('\n')
+			const output = stdout.readLines().join('\n')
 
 			if (!isJson) {
 
