@@ -1,7 +1,15 @@
 
-v0.0.5 / 2021-05-08
+v0.0.6 / 2021-07-11
 ==================
 
+  * feat: npm publishment about configuration
+  * feat: export types in type.d.ts
+  * feature: adapt to latest fibjs
+
+v0.0.5 / 2021-05-08
+===================
+
+  * Release v0.0.5
   * chore: typing robust change, add test about `cli.command`
   * chore: adapt to fibjs >= 0.32
   * ci: add fibjs 0.31.0 as target.
