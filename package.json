@@ -10,6 +10,12 @@
     "ci": "npm run build && npm run test",
     "prepublishOnly": "npm run build"
   },
+  "files": [
+	"dts",
+	"typings",
+	"lib",
+	"type.d.ts"
+  ],
   "ci": {
     "type": "travis, appveyor",
     "version": [
