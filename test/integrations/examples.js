@@ -94,7 +94,9 @@ describe('Examples', () => {
 				'--env', 'envv',
 				'--foo-bar', textQuote('foo-bar\'s value')
 			],
-			`{\n  \"--\": [],\n  \"env\": \"envv\",\n  \"fooBar\": \"foo-bar's value\"\n}`
+			process.platform === 'win32' ?
+			`{\n  \"--\": [],\n  \"env\": \"envv\",\n  \"fooBar\": \"\\\"foo-bar's value\\\"\"\n}`
+			: `{\n  \"--\": [],\n  \"env\": \"envv\",\n  \"fooBar\": \"foo-bar's value\"\n}`
 		],
 		[
 			'dot-style-options',
@@ -106,7 +108,9 @@ describe('Examples', () => {
 				'--foo-bar', textQuote('foo-bar\'s value'),
 				`--env.API_SECRET=${md5Value}`,
 			],
-			`{\n  \"--\": [],\n  \"fooBar\": \"foo-bar's value\",\n  \"env\": {\n    \"API_SECRET\": \"${md5Value}\"\n  }\n}`
+			process.platform === 'win32' ?
+			`{\n  \"--\": [],\n  \"fooBar\": \"\\\"foo-bar's value\\\"\",\n  \"env\": {\n    \"API_SECRET\": \"${md5Value}\"\n  }\n}`
+			: `{\n  \"--\": [],\n  \"fooBar\": \"foo-bar's value\",\n  \"env\": {\n    \"API_SECRET\": \"${md5Value}\"\n  }\n}`
 		],
 		[
 			'dot-style-options',
@@ -117,7 +121,9 @@ describe('Examples', () => {
 				`--env.API_SECRET=${md5Value}`,
 				'--env', 'envv',
 			],
-			`{\n  \"--\": [],\n  \"fooBar\": \"foo-bar's value\",\n  \"env\": \"envv\"\n}`
+			process.platform === 'win32' ?
+			`{\n  \"--\": [],\n  \"fooBar\": \"\\\"foo-bar's value\\\"\",\n  \"env\": \"envv\"\n}`
+			: `{\n  \"--\": [],\n  \"fooBar\": \"foo-bar's value\",\n  \"env\": \"envv\"\n}`
 		],
 		[
 			'rest-arguments',
@@ -129,7 +135,7 @@ describe('Examples', () => {
 			],
 			// entry is `a.js b.js c.js`, no otherFiles
 			process.platform === 'win32' ?
-			`a.js\n[\n  \"b.js\",\n  \"c.js\",\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
+			`a.js b.js c.js\n[\n  \"\\\"foo's value\\\"\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
 			: `a.js b.js c.js\n[\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
 		],
 		[
@@ -141,7 +147,9 @@ describe('Examples', () => {
 				'--foo', textQuote('foo\'s value'),
 			],
 			// entry is `a.js`, otherFiles is ['b.js', 'c.js']
-			`a.js\n[\n  \"b.js\",\n  \"c.js\",\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
+			process.platform === 'win32' ?
+			`\"a.js\"\n[\n  \"\\\"b.js\\\"\",\n  \"\\\"c.js\\\"\",\n  \"\\\"foo's value\\\"\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
+			: `a.js\n[\n  \"b.js\",\n  \"c.js\",\n  \"foo's value\"\n]\n{\n  \"--\": [],\n  \"foo\": true\n}`
 		],
 		[
 			'help',
