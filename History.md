@@ -1,7 +1,13 @@
 
-v0.0.6 / 2021-07-11
+v0.0.7 / 2022-10-01
 ==================
 
+
+
+v0.0.6 / 2021-07-11
+===================
+
+  * Release v0.0.6
   * feat: npm publishment about configuration
   * feat: export types in type.d.ts
   * feature: adapt to latest fibjs
