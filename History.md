@@ -1,7 +1,14 @@
 
-v0.0.8 / 2022-10-01
+v0.1.0 / 2022-10-01
 ==================
 
+  * ci: upgrade ci configuration.
+  * build: remove typings from repo, upgrade fib-typify.
+
+v0.0.8 / 2022-10-01
+===================
+
+  * Release v0.0.8
   * fix: filename case.
 
 v0.0.7 / 2022-10-01
