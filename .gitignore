@@ -2,6 +2,7 @@ node_modules
 test.db*
 package-lock.json
 lib
+typings
 
 config.js*
 

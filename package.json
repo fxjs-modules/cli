@@ -5,16 +5,16 @@
   "types": "typings/index.d.ts",
   "main": "lib",
   "scripts": {
-    "build": "ftsc src/* --outDir ./lib",
+    "build": "rimraf typings lib && ftsc src/* --outDir ./lib",
     "test": "fibjs test",
     "ci": "npm run build && npm run test",
     "prepublishOnly": "npm run build"
   },
   "files": [
-	"dts",
-	"typings",
-	"lib",
-	"type.d.ts"
+    "dts",
+    "typings",
+    "lib",
+    "type.d.ts"
   ],
   "ci": {
     "type": "travis, appveyor",
@@ -43,6 +43,7 @@
     "@fibjs/ci": "^2.3.0",
     "@fibjs/types": "^0.27.0",
     "@types/mri": "^1.1.0",
-    "fib-typify": "^0.8.2"
+    "fib-typify": "^0.11.3",
+    "rimraf": "^3.0.2"
   }
 }
